@@ -8,12 +8,12 @@
 // The code now works only on an NVidia card, so choose that card here
 // To find you computer's setup, switch Print_All_Devices to ON in
 // Device_Utilities.h
-#define Device_No         2    // 0: CPU; 1: Intel 4000; 2: Nvidia
+#define Device_No         1    // 0: CPU; 1: Intel 4000; 2: Nvidia
 #define ProgressBarWidth 45
 
 // Thread block size
-#define Block_Size_X	64                // 16
-#define Block_Size_Y	64                // 16
+#define Block_Size_X	128               // 16
+#define Block_Size_Y	128               // 16
 
 // Number of Blocks
 /* I define the Block_Number_ensions of the matrix as product of two numbers
@@ -21,8 +21,8 @@ Makes it easier to keep them a multiple of something (16, 32). For the Mersenne-
 Twister code, it is essential to keep to GridWith and GridHeight a power of 2,
 e.g. 512, 1024, 2048, etc */
 
-#define Block_Number_X	32               // 32
-#define Block_Number_Y	32               // 32
+#define Block_Number_X	16               // 32
+#define Block_Number_Y	16               // 32
 
 // Matrix Block_Number_ensions
 // (chosen as multiples of the thread block size for simplicity)
@@ -45,14 +45,14 @@ e.g. 512, 1024, 2048, etc */
 
 // Model parameters
 #define Alpha0		0.9	    // Disturbance probability if one of neighbours is disturbed
-#define Alpha2		0.3	    // Recovery probability coefficient
-#define Lambda0		0.00005 // Probability that an occupied cell becoming disturbed by chance
+#define Alpha2		0.6	    // Recovery probability coefficient
+#define Lambda0		0.002   // Probability that an occupied cell becoming disturbed by chance
 
 // Simulation settings
-#define EndTime		500	    // Number of timesteps in the whole simulation
+#define EndTime		1200	// Number of timesteps in the whole simulation
 #define Time		0
 #define StoreNow	1
-#define NumFrames	250
+#define NumFrames	25
 #define MAX_STORE	(NumFrames+1)
 
 #define dT          1

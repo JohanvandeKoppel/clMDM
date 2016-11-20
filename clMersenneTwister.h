@@ -9,8 +9,6 @@
  *
  */
 
-#ifndef MERSENNETWISTER_H
-#define MERSENNETWISTER_H
 #ifndef mersennetwister_h
 #define mersennetwister_h
 
@@ -43,7 +41,7 @@ typedef struct{
 } mt_struct_stripped;
 
 
-#define   MT_RNG_COUNT (4096*8)
+#define   MT_RNG_COUNT (4096*16)
 #define          MT_MM 9
 #define          MT_NN 19
 #define       MT_WMASK 0xFFFFFFFFU
@@ -68,4 +66,4 @@ extern "C"
 uint32_t genrand_mt(mt_struct *mts);
 
 #endif
-#endif
+

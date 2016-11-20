@@ -17,14 +17,9 @@
 #include "clMersenneTwister.h"
 #include "clMersenneTwister_functions.h"
 #include "Device_Utilities.h"
+#include "Initial_values.h"
 
 #define MAX_SOURCE_SIZE (0x100000)
-
-// Forward definitions from AridLandsKernel.cl functions
-void print_platform_info(cl_platform_id);
-void print_device_info(cl_device_id* , int);
-void Query(cl_uint, cl_device_id*);
-void Get_Build_Errors(cl_program, cl_device_id*, cl_int );
 
 // Forward definitions from functions at the end of this code file
 void initialize_RandomCellMatrix(float*,int,int);
@@ -60,8 +55,8 @@ int main()
     /*----------Defining and allocating memeory on host-----------------------*/
     
     // Defining and allocating the memory blocks
-	float* h_Cells          = (float*) malloc(Grid_Memory);
-    float* h_Rand           = (float*) malloc(Grid_Memory);
+	float* h_Cells      = (float*) malloc(Grid_Memory);
+    float* h_Rand       = (float*) malloc(Grid_Memory);
 	float* h_storegrid	= (float*) malloc(mem_size_storegrid);
     
     /*----------Initializing the host arrays----------------------------------*/
@@ -72,13 +67,7 @@ int main()
     
     /*----------Printing info to the screen ----------------------------------*/
 
-	//system("clear");
-    printf("\n");
-	printf(" * * * * * * * * * * * * * * * * * * * * * * * * * * * * * \n");
-	printf(" * Mussel disturbance model                              * \n");
-	printf(" * OpenCL implementation : Johan van de Koppel, 2014     * \n");
-	printf(" * Following a model by Guichard et al 2003              * \n");
-	printf(" * * * * * * * * * * * * * * * * * * * * * * * * * * * * * \n\n");
+    Print_Label();
     
 	printf(" Current grid dimensions: %d x %d cells\n\n",
            Grid_Width, Grid_Height);
@@ -172,32 +161,35 @@ int main()
     
     /*----------End of Mersenne Twister Kernel--------------------------------*/
     
-    // Setting up MT Kernel execution parameters
-    size_t global_item_size= Grid_Size;     // 1D var for total # of work items
-    size_t local_item_size = Block_Number_X*Block_Number_Y; // 1D var for # of work items in the work group
+    /*----------Set op timer and progress bar---------------------------------*/
     
     // create and start timer
     struct timeval Time_Measured;
     gettimeofday(&Time_Measured, NULL);
     double Time_Begin=Time_Measured.tv_sec+(Time_Measured.tv_usec/1000000.0);
-    
-    /* --------------Loop initiation----------- */
 
-    // Progress bar initiation
+    /* Progress bar initiation */
     int RealBarWidth=std::min((int)NumFrames,(int)ProgressBarWidth);
     int BarCounter=0;
-    float BarThresholds[RealBarWidth];
-    for (int i=1;i<RealBarWidth;i++) {BarThresholds[i] = (float)(i+1)/RealBarWidth*NumFrames;};
+    double BarThresholds[RealBarWidth];
+    for (int i=1;i<RealBarWidth;i++)
+        { BarThresholds[i] = (double)(i+1)/(double)RealBarWidth*(double)NumFrames; };
     
-    // Print the reference bar
+    /* Print the reference bar */
     printf(" Progress: [");
     for (int i=0;i<RealBarWidth;i++) { printf("-"); }
     printf("]\n");
     fprintf(stderr, "           >");
     
+    /*----------Kernel parameterization---------------------------------------*/
+
+    size_t global_item_size= Grid_Size;     // 1D var for total # of work items
+    size_t local_item_size = Block_Number_X*Block_Number_Y; // 1D var for # of work items in the work group
+
+    /*----------Calculation loop----------------------------------------------*/
 	for (int Counter=0;Counter<NumFrames;Counter++)
     {
-        for (int Runtime=0;Runtime<floor(EndTime/NumFrames/dT);Runtime++)
+        for (int Runtime=0;Runtime<floor((float)EndTime/NumFrames/dT);Runtime++)
         {
             
             // Running the kernel for 1 time
@@ -293,37 +285,10 @@ int main()
     free(devices);
     
     #if defined(__APPLE__) && defined(__MACH__)
-        //system("say Simulation finished");
+        system("say Simulation finished");
     #endif
 
 	return 0;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Host initialization procedures
-////////////////////////////////////////////////////////////////////////////////
-
-void initialize_Cells(float *h_C,float *h_R,int hite,int width)
-{
-	int i,j;
-	for(i=0;i<hite;i++)
-	{
-		for(j=0;j<width;j++)
-		{
-			h_C[i*width+j]=(float) (1+((h_R[i*width+j]<Frac)?1:0)-2*((h_R[i*width+j]<DFrac)?1:0));
-		}
-	}
-}
-
-void initialize_RandomCellMatrix(float* h_R,int hight,int width)
-{
-	int i,j;
-	for(i=0;i<hight;i++)
-	{
-		for(j=0;j<width;j++)
-		{
-			h_R[i*width+j]=(float)rand() / (float)(RAND_MAX);
-		}
-	}
-}
 

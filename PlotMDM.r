@@ -23,9 +23,9 @@ EndTime=readBin(FID, integer(), n = 1, endian = "little");
 if (Movie==off)   
   # Pick the one you prefer below. X11 is fast, quartz looks nicer. 
   # Windows users should use "windows"
-  #quartz(width=WinWidth/DPI, height=WinHeight/DPI, dpi=DPI)
-  X11(width=WinWidth/DPI*1.5, height=WinHeight/DPI*1.5, 
-      type="cairo", antialias="none", pointsize=12*1.5)
+  quartz(width=WinWidth/DPI, height=WinHeight/DPI, dpi=DPI)
+  #X11(width=WinWidth/DPI*1.5, height=WinHeight/DPI*1.5, 
+  #    type="cairo", antialias="none", pointsize=12*1.5)
 
 for (jj in 0:(NumFrames)){  # Here the time loop starts 
   

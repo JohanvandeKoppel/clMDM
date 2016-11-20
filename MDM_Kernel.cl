@@ -85,7 +85,7 @@ MusselDisturbKernel (__global float* d_Cell, __global float* d_Rdom,
             Nu0=0;
         
         //calculating the fraction of occupied neighbors
-        N	=(float)(Neighbourhood_filter(GNH, d_COccu,current))	/	8.0f;
+        N=(float)(Neighbourhood_filter(GNH, d_COccu,current))	/	8.0f;
 		
         // Here, a possible transition from occupied to disturbed is calculated
         if((d_COccu[current] == 1 ) && (d_Rdom[current]<=(float)(Alpha0*Nu0+Lambda0)))
